@@ -1,8 +1,8 @@
+
 import tkinter as tk
-from tkinter import ANCHOR, LEFT, messagebox
+from tkinter import ANCHOR, BOTH, LEFT, messagebox
 import time
 import datetime
-import show_history_module
 
 def newTask():
     task = my_entry.get()
@@ -20,58 +20,176 @@ def doneTask():
     else:
         messagebox.showwarning("warning", "please choose one item")
 
+def historyTask(history_lb):
+    task = done_lb.get(0, tk.END)
+    if task != "":
+        history_lb.insert(tk.END, task)
+        done_lb.delete(0, 'end')
+
+
 def deleteTask():
     task_lb.delete(ANCHOR)
 
-def countdown():
-        total_seconds = int(entry_hour.get()) * 3600 + int(entry_min.get()) * 60 + int(entry_second.get())
-        while total_seconds >= 0:
-            minute,second = (total_seconds//60, total_seconds % 60)
-            hour = 0
-            if minute > 60:
-                hour , minute = (minute // 60, minute % 60)
+def open_new_window():
+        global history_lb, total_seconds
+        new_window = tk.Toplevel(window)
+        new_window.geometry('500x450+500+200')
+        new_window.title("History")
+        history_label = tk.Label(
+            new_window,
+            text="History",
+            bg="#AEB6BF",
+            font=("Arial 18")
+        )
+        history_label.pack(side=tk.TOP, fill=tk.BOTH)
 
-            
-            mins.set(minute)
-            hrs.set(hour)
-            sec.set(second)
+        frame_history_lb = tk.Frame(new_window)
+        frame_history_lb.place(x=40, y=70)
 
-            time_display_frame.update()
-            time.sleep(1)
-            
-            if total_seconds == 0:
-                hrs.set('00')
-                mins.set('00')
-                sec.set('00')
-            total_seconds -= 1
+        history_lb = tk.Listbox(
+            frame_history_lb,
+            font=('Times',15),
+            width=25,
+            height=12,
+            bd=2,
+            fg='#464646',
+            highlightthickness=0,
+            selectbackground='#a6a6a6',
+            activestyle='none',
+        )
+        history_lb.pack(side=tk.LEFT, fill=tk.BOTH)
 
-def reset_time():
-    hrs.set('00')
-    mins.set('00')
-    sec.set('00')
+        finish_text = tk.Label(
+            new_window,
+            text="Finish During",
+            font=("Arial 20"),
+            bg="#AEB6BF",
+        )
+        finish_text.place(x=315, y=150)
 
-def showHistory():
-    history = []
-    for i in history:
-        history.insert(tk.END, i)
         
-    new_window = tk.Toplevel(window)
-    new_window.geometry("750x250")
-    new_window.title("History")
-    history_listbox = tk.Listbox(
-        new_window,
-        width=50,
-        height=25,
-        font=('Times',12),
-        bd=0,
-        fg='#464646',
-        highlightthickness=1,
-        selectbackground='#a6a6a6',
-        activestyle='none',
-    )
-    history_listbox.pack(fill=tk.BOTH)
+        print_out_time(new_window)
 
-    new_window.mainloop()
+        # Thanh keo cho history lb
+        sb_history = tk.Scrollbar(frame_history_lb)
+        sb_history.pack(side=tk.RIGHT, fill=tk.BOTH)
+        history_lb.config(yscrollcommand=sb_history.set)
+        sb_history.config(command=history_lb.yview)
+
+        historyTask(history_lb)
+
+def open_new_window_clicked():
+        global history_lb, total_seconds
+        new_window = tk.Toplevel(window)
+        new_window.geometry('500x450+500+200')
+        new_window.title("History")
+        history_label = tk.Label(
+            new_window,
+            text="History",
+            bg="#AEB6BF",
+            font=("Arial 18")
+        )
+        history_label.pack(side=tk.TOP, fill=tk.BOTH)
+
+        frame_history_lb = tk.Frame(new_window)
+        frame_history_lb.place(x=40, y=70)
+
+        history_lb = tk.Listbox(
+            frame_history_lb,
+            font=('Times',15),
+            width=25,
+            height=12,
+            bd=2,
+            fg='#464646',
+            highlightthickness=0,
+            selectbackground='#a6a6a6',
+            activestyle='none',
+        )
+        history_lb.pack(side=tk.LEFT, fill=tk.BOTH)
+
+        finish_text = tk.Label(
+            new_window,
+            text="Finish During",
+            font=("Arial 20"),
+            bg="#AEB6BF",
+        )
+        finish_text.place(x=315, y=150)
+
+        print_current_time(new_window)
+        hrs.set('00')
+        mins.set('00')
+        sec.set('00')
+        total_seconds = -1
+
+        # Thanh keo cho history lb
+        sb_history = tk.Scrollbar(frame_history_lb)
+        sb_history.pack(side=tk.RIGHT, fill=tk.BOTH)
+        history_lb.config(yscrollcommand=sb_history.set)
+        sb_history.config(command=history_lb.yview)
+
+        historyTask(history_lb)
+
+def print_out_time(new_window):
+
+    time_print_out = tk.Label(
+        new_window,
+        text=str(entry_hour.get()) + ":" + str(entry_min.get()) + ":" + str(entry_second.get()),
+        font=("Arial 30"),
+    )
+    time_print_out.place(x=320, y=190)
+
+
+def countdown():
+    global total_seconds
+    total_seconds = int(entry_hour.get()) * 3600 + int(entry_min.get()) * 60 + int(entry_second.get())
+    while total_seconds >= 0:
+        minute,second = (total_seconds//60, total_seconds % 60)
+        hour = 0
+        if minute > 60:
+            hour , minute = (minute // 60, minute % 60)
+
+          
+        mins.set(minute)
+        hrs.set(hour)
+        sec.set(second)
+
+        time_display_frame.update()
+        time.sleep(1)
+
+        total_seconds -= 1 
+        if total_seconds == 0:
+            open_new_window()
+    
+    
+    
+        
+    
+
+def current_time_func():
+    global hour_cur, minute_cur, second_cur, current_time
+    total_seconds_init = int(entry_hour.get()) * 3600 + int(entry_min.get()) * 60 + int(entry_second.get())
+
+    current_time = total_seconds
+    time_needed = total_seconds_init - current_time
+
+    if time_needed > 0:
+        minute_cur,second_cur = (time_needed // 60,time_needed % 60)
+        hour_cur = 0
+        if minute_cur > 60:
+            hour_cur,minute_cur = (minute_cur // 60, minute_cur % 60)
+        
+    
+def print_current_time(new_window):
+    current_time_func()
+    global total_seconds
+    time_print_out = tk.Label(
+            new_window,
+            text=str(hour_cur) + ":" + str(minute_cur) + ":" + str(second_cur),
+            font=("Arial 30"),
+        )
+    time_print_out.place(x=320, y=190)
+
+
 
 # Khoi tao giao dien
 window = tk.Tk()
@@ -122,9 +240,9 @@ entry_second.grid(row=1,column=3)
 set_time_btn = tk.Button(entry_time_frame, width=3, text="Start", font=("arial 12"), command=countdown)
 set_time_btn.grid(row=1, column=4)
 
-# Nut reset
-# reset_time_btn = tk.Button(time_display_frame, width=3, text="Reset", font=("arial 14"), command=reset_time)
-# reset_time_btn.grid(row=0, column=1)
+# Nut finish
+finish_time_btn = tk.Button(window, width=4, text="Finish", font=("arial 14"), command=open_new_window_clicked)
+finish_time_btn.place(x= 370, y=120)
 
 # Khoi tao frame cho list box
 frame_task_lb = tk.Frame(window)
@@ -179,18 +297,6 @@ done_lb = tk.Listbox(
     activestyle='none'
 )
 done_lb.pack(side=tk.LEFT, fill=tk.BOTH)
-
-
-# Task list 
-task_list = []
-for item in task_list:
-    task_lb.insert(tk.END, item)
-
-# Done list
-done_list = []
-for item in done_list:
-    done_lb.insert(tk.END, item)
-
 
 # Thanh keo cho task lb
 sb_task = tk.Scrollbar(frame_task_lb)
@@ -247,5 +353,3 @@ done_task_btn.place(x=240, y=320)
 
 
 window.mainloop()
-
-
