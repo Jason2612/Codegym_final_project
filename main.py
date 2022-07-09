@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ANCHOR, BOTH, LEFT, messagebox
 import time
 import datetime
+import playsound
 
 def newTask():
     task = my_entry.get()
@@ -120,6 +121,9 @@ def open_new_window_clicked():
         mins.set('00')
         sec.set('00')
         total_seconds = -1
+        playsound.playsound(r"C:\\Users\\Phong\\Desktop\\My Testing Project\\Final Project\\Sounds\\music1.mp3")
+        
+        
 
         # Thanh keo cho history lb
         sb_history = tk.Scrollbar(frame_history_lb)
@@ -159,6 +163,7 @@ def countdown():
         total_seconds -= 1 
         if total_seconds == 0:
             open_new_window()
+            playsound.playsound(r"C:\\Users\\Phong\\Desktop\\My Testing Project\\Final Project\\Sounds\\music1.mp3")
     
     
     
