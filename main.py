@@ -1,4 +1,5 @@
 
+from re import L
 import tkinter as tk
 from tkinter import ANCHOR, BOTH, LEFT, messagebox
 import time
@@ -193,7 +194,6 @@ def print_current_time(new_window):
             font=("Arial 30"),
         )
     time_print_out.place(x=320, y=190)
-
 
 
 # Khoi tao giao dien
